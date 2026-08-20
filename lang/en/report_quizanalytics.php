@@ -128,6 +128,8 @@ $string['onlyfailed'] = 'Failed Only';
 $string['clearfilter'] = 'Clear';
 $string['showingrecords'] = 'Showing <strong id="visible-count">{$a}</strong> records';
 $string['nomatchingrecords'] = 'No matching student attempts found.';
-$string['reviewattempt'] = 'Review quiz attempt';
+$string['reviewattempt'] = 'Review Quiz Attempt';
 $string['viewusergrades'] = 'View course grades';
+$string['actions'] = 'Action';
+
 

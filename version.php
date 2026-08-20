@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'report_quizanalytics';
-$plugin->version   = 2026082005;         // Plugin release date YYYYMMDDXX.
+$plugin->version   = 2026082006;         // Plugin release date YYYYMMDDXX.
 $plugin->requires  = 2022112800;         // Requires Moodle 4.1 LTS or later.
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v1.0.5';
+$plugin->release   = 'v1.0.6';
