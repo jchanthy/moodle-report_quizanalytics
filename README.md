@@ -48,7 +48,7 @@ An advanced, course-level analytics and reporting plugin for Moodle 5.0+ (and Mo
    ```
 2. Clone this repository as `quizanalytics`:
    ```bash
-   git clone https://github.com/your-username/moodle-report_quizanalytics.git quizanalytics
+   git clone https://github.com/jchanthy/moodle-report_quizanalytics.git quizanalytics
    ```
 3. Visit **Site Administration > Notifications** in your browser to complete the database upgrade.
 
