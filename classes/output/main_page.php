@@ -62,6 +62,7 @@ class main_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output): stdClass {
+        global $CFG;
         $data = new stdClass();
         $data->courseid = $this->courseid;
         $data->refreshedat = userdate(time(), get_string('strftimedatetime', 'langconfig'));
@@ -124,3 +125,5 @@ class main_page implements renderable, templatable {
         return $data;
     }
 }
+
+

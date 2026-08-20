@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library functions and callbacks for report_quizanalytics.
+ * Library functions and navigation callbacks for report_quizanalytics.
  *
  * @package    report_quizanalytics
  * @copyright  2026
@@ -25,28 +25,22 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Extend course navigation with link to Quiz Analytics report.
+ * Extends the course navigation to add Quiz & Assessment Analytics report.
  *
- * @param navigation_node $navigation The course navigation node.
+ * @param navigation_node $navigation The navigation node to extend.
  * @param stdClass $course The course object.
- * @param context_course $context The course context.
+ * @param context $context The course context.
  */
 function report_quizanalytics_extend_navigation_course($navigation, $course, $context) {
     if (has_capability('report/quizanalytics:view', $context)) {
         $url = new moodle_url('/report/quizanalytics/index.php', ['id' => $course->id]);
-        $reportnode = navigation_node::create(
+        $navigation->add(
             get_string('pluginname', 'report_quizanalytics'),
             $url,
-            navigation_node::TYPE_CUSTOM,
+            navigation_node::TYPE_SETTING,
             null,
             'quizanalytics',
             new pix_icon('i/report', '')
         );
-
-        if ($coursereports = $navigation->find('coursereports', navigation_node::TYPE_CONTAINER)) {
-            $coursereports->add_node($reportnode);
-        } else {
-            $navigation->add_node($reportnode);
-        }
     }
 }

@@ -37,13 +37,10 @@ require_capability('report/quizanalytics:view', $context);
 $event = \report_quizanalytics\event\report_viewed::create([
     'context' => $context,
     'courseid' => $course->id,
-    'other' => [
-        'quizid' => $quizid,
-    ],
+    'other' => ['quizid' => $quizid],
 ]);
 $event->trigger();
 
-// Setup page.
 $url = new moodle_url('/report/quizanalytics/index.php', ['id' => $id]);
 if ($quizid > 0) {
     $url->param('quizid', $quizid);
@@ -52,7 +49,9 @@ if ($quizid > 0) {
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_context($context);
-$PAGE->set_title(get_string('pluginname', 'report_quizanalytics') . ': ' . $course->fullname);
+
+$pluginname = get_string('pluginname', 'report_quizanalytics');
+$PAGE->set_title($pluginname . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
 
 // Render output.
@@ -60,6 +59,8 @@ $renderer = $PAGE->get_renderer('report_quizanalytics');
 $renderable = new \report_quizanalytics\output\main_page($course->id, $quizid);
 
 echo $renderer->header();
-echo $renderer->heading(get_string('pluginname', 'report_quizanalytics'));
+echo $renderer->heading($pluginname);
 echo $renderer->render_main_page($renderable);
 echo $renderer->footer();
+
+

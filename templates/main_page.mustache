@@ -21,6 +21,17 @@
 }}
 
 <style>
+/* Full-width container and layout overrides */
+#page.drawers #page-content,
+#page-report-quizanalytics-index #region-main,
+#page-report-quizanalytics-index .main-inner,
+.report-quizanalytics-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
 .quiz-analytics-header {
     background: #ffffff;
     border-radius: 10px;
@@ -58,6 +69,163 @@
 }
 .student-search-box:focus {
     background-color: #ffffff;
+}
+.student-pagination-nav .page-link {
+    color: #495057;
+    border-radius: 6px;
+    margin: 0 2px;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+.student-pagination-nav .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: #ffffff;
+    font-weight: 600;
+}
+.student-pagination-nav .page-item.disabled .page-link {
+    color: #adb5bd;
+    background-color: transparent;
+    border-color: #dee2e6;
+    cursor: not-allowed;
+}
+.table-quiz-students th {
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.4px;
+    background-color: #f8f9fa;
+    white-space: nowrap;
+    border-bottom: 2px solid #dee2e6;
+}
+.table-quiz-students td {
+    vertical-align: middle;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.9rem;
+}
+.report-quizanalytics-container i.fa,
+.report-quizanalytics-container .fa {
+    margin-right: 0.5rem;
+}
+.report-quizanalytics-container .btn i.fa,
+.report-quizanalytics-container .btn .fa {
+    margin-right: 0.4rem;
+}
+.report-quizanalytics-container .input-group-text i.fa,
+.report-quizanalytics-container .input-group-text .fa {
+    margin-right: 0 !important;
+}
+.student-avatar-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+.student-avatar-box i.fa {
+    margin-right: 0 !important;
+}
+.student-name-wrapper {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    font-weight: 600;
+    color: #212529;
+}
+.student-name-wrapper:hover {
+    color: #0d6efd;
+    text-decoration: underline;
+}
+.section-title-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background-color: #f1f5f9;
+    margin-right: 0.65rem;
+}
+.section-title-icon i.fa {
+    margin-right: 0 !important;
+}
+/* Filter bar unified controls */
+.filter-toolbar-control {
+    height: 38px !important;
+    font-size: 0.875rem !important;
+    border-radius: 8px !important;
+    border: 1px solid #ced4da !important;
+    background-color: #f8f9fa !important;
+    color: #334155 !important;
+    padding: 0.375rem 0.75rem !important;
+    width: 100% !important;
+    transition: all 0.2s ease !important;
+}
+.filter-toolbar-control:focus {
+    background-color: #ffffff !important;
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15) !important;
+}
+.btn-filter-clear {
+    height: 38px !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+    background-color: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;
+    padding: 0.375rem 0.85rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    width: 100% !important;
+    transition: all 0.15s ease !important;
+}
+.btn-filter-clear:hover {
+    background-color: #e2e8f0 !important;
+    border-color: #94a3b8 !important;
+    color: #0f172a !important;
+}
+.filter-search-input-group {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    border: 1px solid #ced4da !important;
+    background-color: #f8f9fa !important;
+    height: 38px !important;
+}
+.filter-search-input-group:focus-within {
+    background-color: #ffffff !important;
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15) !important;
+}
+.filter-search-input-group .input-group-text {
+    background: transparent !important;
+    border: none !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.25rem !important;
+}
+.filter-search-input-group .form-control {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 100% !important;
+    padding-left: 0.5rem !important;
+    font-size: 0.875rem !important;
+}
+.student-col-name {
+    min-width: 220px;
+}
+.student-col-email {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 </style>
 
@@ -187,8 +355,9 @@
         </div>
     </div>
 
-    <!-- Charts & Score Distribution Section -->
+    <!-- Charts Section: Side-by-Side (Score Distribution & Pass/Fail Outcome Overview) -->
     <div class="row g-3 mb-4">
+        <!-- Chart 1: Score Distribution -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100 rounded-3">
                 <div class="card-header bg-white border-bottom py-3">
@@ -196,96 +365,179 @@
                         <i class="fa fa-bar-chart text-primary me-2"></i>{{#str}} scoredistribution, report_quizanalytics {{/str}}
                     </h5>
                 </div>
-                <div class="card-body">
-                    <p class="text-muted small mb-3">{{#str}} scoredistribution_desc, report_quizanalytics {{/str}}</p>
-                    <div class="score-buckets">
-                        {{#distribution}}
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-1 small">
-                                    <span class="fw-semibold">{{label}}</span>
-                                    <span class="badge" style="background-color: {{color}}; color: #fff;">{{count}} students ({{percentage}}%)</span>
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <p class="text-muted small mb-3">{{#str}} scoredistribution_desc, report_quizanalytics {{/str}}</p>
+                        <div class="score-buckets">
+                            {{#distribution}}
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1 small">
+                                        <span class="fw-semibold">{{label}}</span>
+                                        <span class="badge" style="background-color: {{color}}; color: #fff;">{{count}} students ({{percentage}}%)</span>
+                                    </div>
+                                    <div class="progress" style="height: 12px; border-radius: 6px;">
+                                        <div class="progress-bar" role="progressbar" style="width: {{percentage}}%; background-color: {{color}};" aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
                                 </div>
-                                <div class="progress" style="height: 12px; border-radius: 6px;">
-                                    <div class="progress-bar" role="progressbar" style="width: {{percentage}}%; background-color: {{color}};" aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        {{/distribution}}
+                            {{/distribution}}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{#hasquestions}}
+        <!-- Chart 2: Pass vs. Fail & Outcome Overview -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100 rounded-3">
                 <div class="card-header bg-white border-bottom py-3">
                     <h5 class="card-title mb-0 fw-bold">
-                        <i class="fa fa-question-circle text-info me-2"></i>{{#str}} questioninsights, report_quizanalytics {{/str}}
+                        <i class="fa fa-pie-chart text-success me-2"></i>{{#str}} passfailratio, report_quizanalytics {{/str}}
                     </h5>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive" style="max-height: 330px; overflow-y: auto;">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr class="small text-uppercase">
-                                    <th>#</th>
-                                    <th>{{#str}} question, report_quizanalytics {{/str}}</th>
-                                    <th>{{#str}} facilityindex, report_quizanalytics {{/str}}</th>
-                                    <th>{{#str}} questiontype, report_quizanalytics {{/str}}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#questions}}
-                                <tr>
-                                    <td class="fw-bold">{{slot}}</td>
-                                    <td class="text-truncate" style="max-width: 220px;" title="{{name}}">{{name}}</td>
-                                    <td>
-                                        <span class="{{badgeclass}}">{{facility}}%</span>
-                                    </td>
-                                    <td><span class="badge bg-secondary">{{qtype}}</span></td>
-                                </tr>
-                                {{/questions}}
-                            </tbody>
-                        </table>
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <p class="text-muted small mb-3">{{#str}} passfailratio_desc, report_quizanalytics {{/str}}</p>
+                        
+                        <!-- Combined Ratio Bar -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1 small">
+                                <span class="fw-semibold text-success"><i class="fa fa-check-circle me-1"></i>{{#str}} passingattempts, report_quizanalytics {{/str}} ({{summary.passrate}}%)</span>
+                                <span class="fw-semibold text-danger"><i class="fa fa-times-circle me-1"></i>{{#str}} failingattempts, report_quizanalytics {{/str}} ({{summary.failrate}}%)</span>
+                            </div>
+                            <div class="progress" style="height: 18px; border-radius: 9px; overflow: hidden;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{summary.passrate}}%; font-size: 0.75rem; font-weight: 600;" aria-valuenow="{{summary.passrate}}" aria-valuemin="0" aria-valuemax="100">
+                                    {{summary.passcount}} passed
+                                </div>
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: {{summary.failrate}}%; font-size: 0.75rem; font-weight: 600;" aria-valuenow="{{summary.failrate}}" aria-valuemin="0" aria-valuemax="100">
+                                    {{summary.failcount}} failed
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Key Performance Benchmarks Grid -->
+                        <div class="p-3 bg-light rounded-3 mt-4">
+                            <h6 class="small fw-bold text-uppercase text-muted mb-2">
+                                <i class="fa fa-sliders me-1"></i>{{#str}} performancebenchmarks, report_quizanalytics {{/str}}
+                            </h6>
+                            <div class="row g-2 text-center">
+                                <div class="col-3">
+                                    <div class="bg-white p-2 rounded border">
+                                        <div class="text-muted small">{{#str}} benchmark_highest, report_quizanalytics {{/str}}</div>
+                                        <div class="fw-bold text-success fs-6">{{summary.highestgrade}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="bg-white p-2 rounded border">
+                                        <div class="text-muted small">{{#str}} benchmark_average, report_quizanalytics {{/str}}</div>
+                                        <div class="fw-bold text-primary fs-6">{{summary.avggrade}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="bg-white p-2 rounded border">
+                                        <div class="text-muted small">{{#str}} benchmark_median, report_quizanalytics {{/str}}</div>
+                                        <div class="fw-bold text-dark fs-6">{{summary.mediangrade}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="bg-white p-2 rounded border">
+                                        <div class="text-muted small">{{#str}} benchmark_lowest, report_quizanalytics {{/str}}</div>
+                                        <div class="fw-bold text-danger fs-6">{{summary.lowestgrade}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        {{/hasquestions}}
     </div>
+
+    {{#hasquestions}}
+    <!-- Question Difficulty & Insights Full-Width Section -->
+    <div class="card border-0 shadow-sm mb-4 rounded-3">
+        <div class="card-header bg-white border-bottom py-3">
+            <h5 class="card-title mb-0 fw-bold">
+                <i class="fa fa-question-circle text-info me-2"></i>{{#str}} questioninsights, report_quizanalytics {{/str}}
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr class="small text-uppercase">
+                            <th style="width: 60px;">#</th>
+                            <th>{{#str}} question, report_quizanalytics {{/str}}</th>
+                            <th style="width: 200px;">{{#str}} facilityindex, report_quizanalytics {{/str}}</th>
+                            <th style="width: 150px;">{{#str}} questiontype, report_quizanalytics {{/str}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#questions}}
+                        <tr>
+                            <td class="fw-bold text-muted">{{slot}}</td>
+                            <td>
+                                <span class="fw-semibold text-dark">{{name}}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height: 8px; border-radius: 4px;">
+                                        <div class="progress-bar {{#facility_low}}bg-danger{{/facility_low}}{{^facility_low}}bg-success{{/facility_low}}" style="width: {{facility}}%;"></div>
+                                    </div>
+                                    <span class="{{badgeclass}}">{{facility}}%</span>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-secondary">{{qtype}}</span></td>
+                        </tr>
+                        {{/questions}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {{/hasquestions}}
 
     <!-- Student Performance & Filter Table -->
     <div class="card border-0 shadow-sm mb-4 rounded-3">
         <div class="card-header bg-white border-bottom py-3">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                <h5 class="card-title mb-0 fw-bold">
-                    <i class="fa fa-table text-secondary me-2"></i>{{#str}} studentperformance, report_quizanalytics {{/str}}
+                <h5 class="card-title mb-0 fw-bold d-flex align-items-center">
+                    <span class="section-title-icon text-secondary"><i class="fa fa-table"></i></span>
+                    <span>{{#str}} studentperformance, report_quizanalytics {{/str}}</span>
                 </h5>
                 <span class="badge bg-light text-dark border px-3 py-2" id="records-counter-badge">
                     {{#str}} showingrecords, report_quizanalytics, {{summary.totalattempts}} {{/str}}
                 </span>
             </div>
 
-            <!-- Search and Filter Controls -->
+            <!-- Search, Filter, and Page Size Controls -->
             <div class="row g-2 align-items-center">
-                <div class="col-md-6 col-sm-12">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0">
+                <div class="col-lg-5 col-md-12">
+                    <div class="input-group filter-search-input-group">
+                        <span class="input-group-text">
                             <i class="fa fa-search text-muted"></i>
                         </span>
-                        <input type="text" id="student-search-input" class="form-control student-search-box border-start-0" placeholder="{{#str}} searchplaceholder, report_quizanalytics {{/str}}" oninput="window.filterQuizStudents && window.filterQuizStudents();" onkeyup="window.filterQuizStudents && window.filterQuizStudents();">
+                        <input type="text" id="student-search-input" class="form-control" placeholder="{{#str}} searchplaceholder, report_quizanalytics {{/str}}" oninput="window.filterQuizStudents && window.filterQuizStudents();" onkeyup="window.filterQuizStudents && window.filterQuizStudents();">
                     </div>
                 </div>
-                <div class="col-md-4 col-sm-8">
-                    <select id="student-status-filter" class="form-select student-search-box" onchange="window.filterQuizStudents && window.filterQuizStudents();">
+                <div class="col-lg-3 col-md-5 col-sm-6">
+                    <select id="student-status-filter" class="form-select filter-toolbar-control" onchange="window.filterQuizStudents && window.filterQuizStudents();">
                         <option value="all">{{#str}} allstatuses, report_quizanalytics {{/str}}</option>
                         <option value="passed">{{#str}} onlypassed, report_quizanalytics {{/str}}</option>
                         <option value="failed">{{#str}} onlyfailed, report_quizanalytics {{/str}}</option>
                     </select>
                 </div>
-                <div class="col-md-2 col-sm-4">
-                    <button type="button" id="btn-clear-filters" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-1" onclick="var s=document.getElementById('student-search-input'); var f=document.getElementById('student-status-filter'); if(s) s.value=''; if(f) f.value='all'; if(window.filterQuizStudents) window.filterQuizStudents();">
-                        <i class="fa fa-times"></i> {{#str}} clearfilter, report_quizanalytics {{/str}}
+                <div class="col-lg-2 col-md-4 col-sm-3">
+                    <select id="table-page-size" class="form-select filter-toolbar-control" onchange="window.changeQuizPageSize && window.changeQuizPageSize(this.value);" title="{{#str}} pagesize, report_quizanalytics {{/str}}">
+                        <option value="10" selected>10 {{#str}} perpage, report_quizanalytics {{/str}}</option>
+                        <option value="25">25 {{#str}} perpage, report_quizanalytics {{/str}}</option>
+                        <option value="50">50 {{#str}} perpage, report_quizanalytics {{/str}}</option>
+                        <option value="100">100 {{#str}} perpage, report_quizanalytics {{/str}}</option>
+                        <option value="all">{{#str}} all, report_quizanalytics {{/str}}</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-3">
+                    <button type="button" id="btn-clear-filters" class="btn btn-filter-clear" onclick="var s=document.getElementById('student-search-input'); var f=document.getElementById('student-status-filter'); if(s) s.value=''; if(f) f.value='all'; if(window.filterQuizStudents) window.filterQuizStudents();">
+                        <i class="fa fa-times me-2"></i><span>{{#str}} clearfilter, report_quizanalytics {{/str}}</span>
                     </button>
                 </div>
             </div>
@@ -293,62 +545,77 @@
 
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover table-striped align-middle mb-0" id="student-attempts-table">
+                <table class="table table-hover table-striped align-middle mb-0 table-quiz-students" id="student-attempts-table">
                     <thead class="table-light">
                         <tr class="small text-uppercase text-secondary">
-                            <th>{{#str}} studentname, report_quizanalytics {{/str}}</th>
-                            <th>{{#str}} email, report_quizanalytics {{/str}}</th>
-                            <th>{{#str}} attemptnumber, report_quizanalytics {{/str}}</th>
+                            <th class="student-col-name">{{#str}} studentname, report_quizanalytics {{/str}}</th>
+                            <th class="student-col-email">{{#str}} email, report_quizanalytics {{/str}}</th>
+                            <th class="text-center">{{#str}} attemptnumber, report_quizanalytics {{/str}}</th>
                             <th>{{#str}} timefinish, report_quizanalytics {{/str}}</th>
                             <th>{{#str}} timetaken, report_quizanalytics {{/str}}</th>
-                            <th>{{#str}} grade, report_quizanalytics {{/str}}</th>
-                            <th>{{#str}} percentage, report_quizanalytics {{/str}}</th>
-                            <th>{{#str}} status, report_quizanalytics {{/str}}</th>
+                            <th class="text-center">{{#str}} grade, report_quizanalytics {{/str}}</th>
+                            <th class="text-center">{{#str}} percentage, report_quizanalytics {{/str}}</th>
+                            <th class="text-center">{{#str}} status, report_quizanalytics {{/str}}</th>
                             <th class="text-end">{{#str}} actions, report_quizanalytics {{/str}}</th>
                         </tr>
                     </thead>
                     <tbody id="student-attempts-tbody">
                         {{#attempts}}
                         <tr class="student-attempt-row" data-name="{{fullname}}" data-email="{{email}}" data-idnumber="{{idnumber}}" data-status="{{#ispass}}passed{{/ispass}}{{^ispass}}failed{{/ispass}}">
-                            <td class="fw-bold">
-                                <a href="{{{config.wwwroot}}}/mod/quiz/review.php?attempt={{attemptid}}" target="_blank" class="text-decoration-none fw-bold" title="{{#str}} reviewattempt, report_quizanalytics {{/str}}">
-                                    <i class="fa fa-user-circle text-primary me-1"></i>{{fullname}}
+                            <td class="student-col-name fw-semibold">
+                                <a href="{{{config.wwwroot}}}/mod/quiz/review.php?attempt={{attemptid}}" target="_blank" class="student-name-wrapper" title="{{#str}} reviewattempt, report_quizanalytics {{/str}}">
+                                    <span class="student-avatar-box">
+                                        <i class="fa fa-user"></i>
+                                    </span>
+                                    <span>{{fullname}}</span>
                                 </a>
                             </td>
-                            <td class="text-muted small">{{email}}</td>
-                            <td>
+                            <td class="student-col-email text-muted small" title="{{email}}">{{email}}</td>
+                            <td class="text-center">
                                 <span class="badge bg-light text-dark border">#{{attempt}}</span>
                             </td>
-                            <td class="small">{{timefinish}}</td>
-                            <td class="small">{{timetaken}}</td>
-                            <td class="fw-bold text-dark">{{grade}} / {{maxgrade}}</td>
-                            <td>
+                            <td class="small text-nowrap">{{timefinish}}</td>
+                            <td class="small text-nowrap">{{timetaken}}</td>
+                            <td class="text-center fw-bold text-dark text-nowrap">{{grade}} <span class="small text-muted fw-normal">/ {{maxgrade}}</span></td>
+                            <td class="text-center">
                                 <span class="small fw-semibold">{{percentage}}%</span>
                             </td>
-                            <td>
+                            <td class="text-center">
                                 {{#ispass}}
-                                    <span class="badge bg-success text-white">{{status}}</span>
+                                    <span class="badge bg-success text-white px-2 py-1">{{status}}</span>
                                 {{/ispass}}
                                 {{^ispass}}
-                                    <span class="badge bg-danger text-white">{{status}}</span>
+                                    <span class="badge bg-danger text-white px-2 py-1">{{status}}</span>
                                 {{/ispass}}
                             </td>
-                            <td class="text-end">
-                                <a href="{{{config.wwwroot}}}/mod/quiz/review.php?attempt={{attemptid}}" target="_blank" class="btn btn-sm btn-outline-primary shadow-xs d-inline-flex align-items-center gap-1 py-1 px-2" title="{{#str}} reviewattempt, report_quizanalytics {{/str}}">
-                                    <i class="fa fa-file-text-o"></i> {{#str}} reviewattempt, report_quizanalytics {{/str}}
+                            <td class="text-end text-nowrap">
+                                <a href="{{{config.wwwroot}}}/mod/quiz/review.php?attempt={{attemptid}}" target="_blank" class="btn btn-sm btn-outline-primary shadow-xs d-inline-flex align-items-center py-1 px-2" title="{{#str}} reviewattempt, report_quizanalytics {{/str}}">
+                                    <i class="fa fa-file-text-o me-2"></i><span>{{#str}} reviewattempt, report_quizanalytics {{/str}}</span>
                                 </a>
                             </td>
                         </tr>
                         {{/attempts}}
                         <tr id="no-matching-row" style="display: none;">
-                            <td colspan="9" class="text-center py-4 text-muted">
+                            <td colspan="9" class="text-center py-5 text-muted">
                                 <i class="fa fa-search fa-2x mb-2 d-block text-secondary"></i>
-                                {{#str}} nomatchingrecords, report_quizanalytics {{/str}}
+                                <span>{{#str}} nomatchingrecords, report_quizanalytics {{/str}}</span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <!-- Card Footer with Pagination Controls -->
+        <div class="card-footer bg-white border-top py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="text-muted small" id="pagination-info">
+                {{#str}} showingentries, report_quizanalytics, {{summary.totalattempts}} {{/str}}
+            </div>
+            <nav aria-label="Student attempts pagination" class="student-pagination-nav">
+                <ul class="pagination pagination-sm mb-0 flex-wrap justify-content-center" id="student-pagination-list">
+                    <!-- Dynamic page numbers generated by JS -->
+                </ul>
+            </nav>
         </div>
     </div>
 
@@ -483,19 +750,27 @@
 
 <script>
 (function() {
-    window.filterQuizStudents = function() {
+    var quizTableState = {
+        currentPage: 1,
+        pageSize: 10,
+        filteredIndices: []
+    };
+
+    function updateFilteredIndices() {
         var searchInput = document.getElementById('student-search-input');
         var statusFilter = document.getElementById('student-status-filter');
         var rows = document.querySelectorAll('.student-attempt-row');
-        var noMatchRow = document.getElementById('no-matching-row');
-        var visibleCountElem = document.getElementById('visible-count');
 
-        if (!rows || rows.length === 0) return;
+        if (!rows || rows.length === 0) {
+            quizTableState.filteredIndices = [];
+            return;
+        }
+
         var query = searchInput ? searchInput.value.toLowerCase().trim() : '';
         var status = statusFilter ? statusFilter.value : 'all';
-        var visibleCount = 0;
+        var indices = [];
 
-        rows.forEach(function(row) {
+        rows.forEach(function(row, idx) {
             var name = (row.getAttribute('data-name') || '').toLowerCase();
             var email = (row.getAttribute('data-email') || '').toLowerCase();
             var idnumber = (row.getAttribute('data-idnumber') || '').toLowerCase();
@@ -509,19 +784,127 @@
             var matchesStatus = (status === 'all') || (rowStatus === status);
 
             if (matchesQuery && matchesStatus) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
+                indices.push(idx);
             }
         });
 
-        if (visibleCountElem) {
-            visibleCountElem.textContent = visibleCount;
+        quizTableState.filteredIndices = indices;
+    }
+
+    function renderPagination() {
+        var rows = document.querySelectorAll('.student-attempt-row');
+        var noMatchRow = document.getElementById('no-matching-row');
+        var fromElem = document.getElementById('pag-from');
+        var toElem = document.getElementById('pag-to');
+        var totalElem = document.getElementById('pag-total');
+        var badgeElem = document.getElementById('records-counter-badge');
+        var pagContainer = document.getElementById('student-pagination-list');
+
+        if (!rows || rows.length === 0) return;
+
+        var totalFiltered = quizTableState.filteredIndices.length;
+        var isAll = (quizTableState.pageSize === 'all');
+        var pSize = isAll ? totalFiltered : parseInt(quizTableState.pageSize, 10);
+        if (pSize < 1) pSize = 10;
+
+        var totalPages = isAll ? 1 : Math.max(1, Math.ceil(totalFiltered / pSize));
+        if (quizTableState.currentPage > totalPages) quizTableState.currentPage = totalPages;
+        if (quizTableState.currentPage < 1) quizTableState.currentPage = 1;
+
+        var startIndex = isAll ? 0 : (quizTableState.currentPage - 1) * pSize;
+        var endIndex = isAll ? totalFiltered : Math.min(startIndex + pSize, totalFiltered);
+
+        // Hide all rows first
+        rows.forEach(function(r) { r.style.display = 'none'; });
+
+        // Show only current page slice
+        for (var i = startIndex; i < endIndex; i++) {
+            var rowIdx = quizTableState.filteredIndices[i];
+            if (rows[rowIdx]) {
+                rows[rowIdx].style.display = '';
+            }
         }
-        if (noMatchRow) {
-            noMatchRow.style.display = (visibleCount === 0) ? '' : 'none';
+
+        // Update counter badges and info
+        if (fromElem) fromElem.textContent = (totalFiltered === 0) ? '0' : (startIndex + 1);
+        if (toElem) toElem.textContent = endIndex;
+        if (totalElem) totalElem.textContent = totalFiltered;
+        if (badgeElem) badgeElem.innerHTML = 'Showing <strong>' + totalFiltered + '</strong> records';
+        if (noMatchRow) noMatchRow.style.display = (totalFiltered === 0) ? '' : 'none';
+
+        // Render pagination buttons
+        if (!pagContainer) return;
+        pagContainer.innerHTML = '';
+
+        if (totalPages <= 1) return;
+
+        function addPageItem(text, pageNum, isActive, isDisabled) {
+            var li = document.createElement('li');
+            li.className = 'page-item' + (isActive ? ' active' : '') + (isDisabled ? ' disabled' : '');
+            var a = document.createElement('a');
+            a.className = 'page-link';
+            a.href = '#!';
+            a.innerHTML = text;
+            if (!isDisabled && !isActive) {
+                a.onclick = function(e) {
+                    e.preventDefault();
+                    quizTableState.currentPage = pageNum;
+                    renderPagination();
+                };
+            }
+            li.appendChild(a);
+            pagContainer.appendChild(li);
         }
+
+        // Previous
+        addPageItem('&laquo;', quizTableState.currentPage - 1, false, quizTableState.currentPage === 1);
+
+        // Page numbers
+        var maxVisible = 5;
+        var startP = Math.max(1, quizTableState.currentPage - Math.floor(maxVisible / 2));
+        var endP = Math.min(totalPages, startP + maxVisible - 1);
+        if (endP - startP + 1 < maxVisible) {
+            startP = Math.max(1, endP - maxVisible + 1);
+        }
+
+        if (startP > 1) {
+            addPageItem('1', 1, false, false);
+            if (startP > 2) {
+                var ell = document.createElement('li');
+                ell.className = 'page-item disabled';
+                ell.innerHTML = '<span class="page-link">&hellip;</span>';
+                pagContainer.appendChild(ell);
+            }
+        }
+
+        for (var p = startP; p <= endP; p++) {
+            addPageItem(p.toString(), p, p === quizTableState.currentPage, false);
+        }
+
+        if (endP < totalPages) {
+            if (endP < totalPages - 1) {
+                var ell2 = document.createElement('li');
+                ell2.className = 'page-item disabled';
+                ell2.innerHTML = '<span class="page-link">&hellip;</span>';
+                pagContainer.appendChild(ell2);
+            }
+            addPageItem(totalPages.toString(), totalPages, false, false);
+        }
+
+        // Next
+        addPageItem('&raquo;', quizTableState.currentPage + 1, false, quizTableState.currentPage === totalPages);
+    }
+
+    window.filterQuizStudents = function() {
+        updateFilteredIndices();
+        quizTableState.currentPage = 1;
+        renderPagination();
+    };
+
+    window.changeQuizPageSize = function(size) {
+        quizTableState.pageSize = size;
+        quizTableState.currentPage = 1;
+        renderPagination();
     };
 
     window.handleQuizExportDownload = function() {
@@ -561,23 +944,34 @@
         }, 150);
     };
 
-    // Auto-load saved export settings on render
-    try {
-        var savedFields = localStorage.getItem('report_quizanalytics_export_fields');
-        if (savedFields) {
-            var fieldList = JSON.parse(savedFields);
-            if (Array.isArray(fieldList) && fieldList.length > 0) {
-                document.querySelectorAll('.export-field').forEach(function(cb) {
-                    cb.checked = (fieldList.indexOf(cb.value) !== -1);
-                });
+    // Auto-init on DOM ready
+    function initTable() {
+        updateFilteredIndices();
+        renderPagination();
+
+        try {
+            var savedFields = localStorage.getItem('report_quizanalytics_export_fields');
+            if (savedFields) {
+                var fieldList = JSON.parse(savedFields);
+                if (Array.isArray(fieldList) && fieldList.length > 0) {
+                    document.querySelectorAll('.export-field').forEach(function(cb) {
+                        cb.checked = (fieldList.indexOf(cb.value) !== -1);
+                    });
+                }
             }
-        }
-        var savedFormat = localStorage.getItem('report_quizanalytics_export_format');
-        if (savedFormat) {
-            var formatRadio = document.querySelector('.export-format-radio[value="' + savedFormat + '"]');
-            if (formatRadio) formatRadio.checked = true;
-        }
-    } catch(e) {}
+            var savedFormat = localStorage.getItem('report_quizanalytics_export_format');
+            if (savedFormat) {
+                var formatRadio = document.querySelector('.export-format-radio[value="' + savedFormat + '"]');
+                if (formatRadio) formatRadio.checked = true;
+            }
+        } catch(e) {}
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTable);
+    } else {
+        initTable();
+    }
 })();
 </script>
 
@@ -586,5 +980,6 @@ require(['report_quizanalytics/charts'], function(charts) {
     charts.init();
 });
 {{/js}}
+
 
 

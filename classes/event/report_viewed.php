@@ -65,3 +65,5 @@ class report_viewed extends base {
         return new moodle_url('/report/quizanalytics/index.php', ['id' => $this->courseid]);
     }
 }
+
+

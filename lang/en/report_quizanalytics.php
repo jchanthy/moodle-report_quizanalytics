@@ -56,6 +56,17 @@ $string['bucket_good'] = '70% - 84% (Good)';
 $string['bucket_average'] = '50% - 69% (Average)';
 $string['bucket_poor'] = 'Below 50% (Needs Support)';
 
+// Pass/Fail & Performance Breakdown
+$string['passfailratio'] = 'Pass vs. Fail & Outcome Overview';
+$string['passfailratio_desc'] = 'Proportion of students meeting the passing grade threshold.';
+$string['passingattempts'] = 'Passed Students';
+$string['failingattempts'] = 'Needs Support (Failed)';
+$string['performancebenchmarks'] = 'Grade Benchmarks';
+$string['benchmark_highest'] = 'Highest';
+$string['benchmark_average'] = 'Average';
+$string['benchmark_median'] = 'Median';
+$string['benchmark_lowest'] = 'Lowest';
+
 // Question Insights
 $string['questioninsights'] = 'Question Difficulty & Analysis';
 $string['questioninsights_desc'] = 'Identifies questions that students found most challenging.';
@@ -127,9 +138,18 @@ $string['onlypassed'] = 'Passed Only';
 $string['onlyfailed'] = 'Failed Only';
 $string['clearfilter'] = 'Clear';
 $string['showingrecords'] = 'Showing <strong id="visible-count">{$a}</strong> records';
+$string['showingentries'] = 'Showing <span id="pag-from">1</span> to <span id="pag-to">10</span> of <span id="pag-total">{$a}</span> attempts';
+$string['perpage'] = 'per page';
+$string['pagesize'] = 'Page size';
+$string['firstpage'] = 'First';
+$string['lastpage'] = 'Last';
+$string['prevpage'] = 'Previous';
+$string['nextpage'] = 'Next';
+$string['all'] = 'All';
 $string['nomatchingrecords'] = 'No matching student attempts found.';
 $string['reviewattempt'] = 'Review Quiz Attempt';
 $string['viewusergrades'] = 'View course grades';
 $string['actions'] = 'Action';
+
 
 

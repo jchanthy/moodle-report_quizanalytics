@@ -141,8 +141,8 @@ class quiz_analyzer {
 
         $summary->distinctstudents = count($distinctusers);
         $summary->passcount = $passcount;
-        $summary->failcount = $failcount;
         $summary->passrate = $summary->totalattempts > 0 ? round(($passcount / $summary->totalattempts) * 100, 1) : 0;
+        $summary->failrate = $summary->totalattempts > 0 ? round(($failcount / $summary->totalattempts) * 100, 1) : 0;
 
         if (!empty($grades)) {
             $summary->avggrade = round(array_sum($grades) / count($grades), 2);
@@ -255,14 +255,14 @@ class quiz_analyzer {
         foreach ($questions as $q) {
             $facility = round((float)$q->avgfraction * 100, 1);
             if ($facility < 40) {
+                $badgeclass = 'badge bg-danger';
                 $difficulty = get_string('difficulty_hard', 'report_quizanalytics');
-                $badgeclass = 'badge bg-danger text-white';
             } else if ($facility < 70) {
-                $difficulty = get_string('difficulty_medium', 'report_quizanalytics');
                 $badgeclass = 'badge bg-warning text-dark';
+                $difficulty = get_string('difficulty_medium', 'report_quizanalytics');
             } else {
+                $badgeclass = 'badge bg-success';
                 $difficulty = get_string('difficulty_easy', 'report_quizanalytics');
-                $badgeclass = 'badge bg-success text-white';
             }
 
             $insights[] = [
@@ -364,3 +364,5 @@ class quiz_analyzer {
         return sprintf('%02dm %02ds', $minutes, $secs);
     }
 }
+
+

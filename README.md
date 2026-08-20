@@ -64,7 +64,7 @@ An advanced, course-level analytics and reporting plugin for Moodle 5.0+ (and Mo
 
 ## 🔒 Capabilities & Permissions
 
-- `report/quizanalytics:view`: Allows users to view quiz analytics and export reports.
+- `course/report/quizanalytics:view`: Allows users to view quiz analytics and export reports.
   - **Default Roles Allowed:** Teacher, Non-editing teacher, Manager, Administrator.
 
 ---

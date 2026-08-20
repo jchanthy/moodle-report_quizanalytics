@@ -23,25 +23,30 @@
 define(['jquery'], function($) {
     'use strict';
 
+    var tableState = {
+        currentPage: 1,
+        pageSize: 10,
+        filteredIndices: []
+    };
+
     /**
-     * Filter student table rows based on search input and status filter.
+     * Recompute matching row indices.
      */
-    function filterStudentTable() {
+    function updateFilteredIndices() {
         var searchInput = document.getElementById('student-search-input');
         var statusFilter = document.getElementById('student-status-filter');
         var rows = document.querySelectorAll('.student-attempt-row');
-        var noMatchRow = document.getElementById('no-matching-row');
-        var visibleCountElem = document.getElementById('visible-count');
 
         if (!rows || rows.length === 0) {
+            tableState.filteredIndices = [];
             return;
         }
 
         var query = searchInput ? searchInput.value.toLowerCase().trim() : '';
         var status = statusFilter ? statusFilter.value : 'all';
-        var visibleCount = 0;
+        var indices = [];
 
-        rows.forEach(function(row) {
+        rows.forEach(function(row, idx) {
             var name = (row.getAttribute('data-name') || '').toLowerCase();
             var email = (row.getAttribute('data-email') || '').toLowerCase();
             var idnumber = (row.getAttribute('data-idnumber') || '').toLowerCase();
@@ -55,20 +60,150 @@ define(['jquery'], function($) {
             var matchesStatus = (status === 'all') || (rowStatus === status);
 
             if (matchesQuery && matchesStatus) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
+                indices.push(idx);
             }
         });
 
-        if (visibleCountElem) {
-            visibleCountElem.textContent = visibleCount;
+        tableState.filteredIndices = indices;
+    }
+
+    /**
+     * Render the pagination and update visible rows.
+     */
+    function renderPagination() {
+        var rows = document.querySelectorAll('.student-attempt-row');
+        var noMatchRow = document.getElementById('no-matching-row');
+        var fromElem = document.getElementById('pag-from');
+        var toElem = document.getElementById('pag-to');
+        var totalElem = document.getElementById('pag-total');
+        var badgeElem = document.getElementById('records-counter-badge');
+        var pagContainer = document.getElementById('student-pagination-list');
+
+        if (!rows || rows.length === 0) {
+            return;
         }
 
-        if (noMatchRow) {
-            noMatchRow.style.display = (visibleCount === 0) ? '' : 'none';
+        var totalFiltered = tableState.filteredIndices.length;
+        var isAll = (tableState.pageSize === 'all');
+        var pSize = isAll ? totalFiltered : parseInt(tableState.pageSize, 10);
+        if (pSize < 1) {
+            pSize = 10;
         }
+
+        var totalPages = isAll ? 1 : Math.max(1, Math.ceil(totalFiltered / pSize));
+        if (tableState.currentPage > totalPages) {
+            tableState.currentPage = totalPages;
+        }
+        if (tableState.currentPage < 1) {
+            tableState.currentPage = 1;
+        }
+
+        var startIndex = isAll ? 0 : (tableState.currentPage - 1) * pSize;
+        var endIndex = isAll ? totalFiltered : Math.min(startIndex + pSize, totalFiltered);
+
+        // Hide all rows
+        rows.forEach(function(r) {
+            r.style.display = 'none';
+        });
+
+        // Show current slice
+        for (var i = startIndex; i < endIndex; i++) {
+            var rowIdx = tableState.filteredIndices[i];
+            if (rows[rowIdx]) {
+                rows[rowIdx].style.display = '';
+            }
+        }
+
+        // Update indicators
+        if (fromElem) {
+            fromElem.textContent = (totalFiltered === 0) ? '0' : (startIndex + 1);
+        }
+        if (toElem) {
+            toElem.textContent = endIndex;
+        }
+        if (totalElem) {
+            totalElem.textContent = totalFiltered;
+        }
+        if (badgeElem) {
+            badgeElem.innerHTML = 'Showing <strong>' + totalFiltered + '</strong> records';
+        }
+        if (noMatchRow) {
+            noMatchRow.style.display = (totalFiltered === 0) ? '' : 'none';
+        }
+
+        // Update pagination buttons
+        if (!pagContainer) {
+            return;
+        }
+        pagContainer.innerHTML = '';
+
+        if (totalPages <= 1) {
+            return;
+        }
+
+        function addPageItem(text, pageNum, isActive, isDisabled) {
+            var li = document.createElement('li');
+            li.className = 'page-item' + (isActive ? ' active' : '') + (isDisabled ? ' disabled' : '');
+            var a = document.createElement('a');
+            a.className = 'page-link';
+            a.href = '#!';
+            a.innerHTML = text;
+            if (!isDisabled && !isActive) {
+                a.onclick = function(e) {
+                    e.preventDefault();
+                    tableState.currentPage = pageNum;
+                    renderPagination();
+                };
+            }
+            li.appendChild(a);
+            pagContainer.appendChild(li);
+        }
+
+        // Previous
+        addPageItem('&laquo;', tableState.currentPage - 1, false, tableState.currentPage === 1);
+
+        var maxVisible = 5;
+        var startP = Math.max(1, tableState.currentPage - Math.floor(maxVisible / 2));
+        var endP = Math.min(totalPages, startP + maxVisible - 1);
+        if (endP - startP + 1 < maxVisible) {
+            startP = Math.max(1, endP - maxVisible + 1);
+        }
+
+        if (startP > 1) {
+            addPageItem('1', 1, false, false);
+            if (startP > 2) {
+                var ell = document.createElement('li');
+                ell.className = 'page-item disabled';
+                ell.innerHTML = '<span class="page-link">&hellip;</span>';
+                pagContainer.appendChild(ell);
+            }
+        }
+
+        for (var p = startP; p <= endP; p++) {
+            addPageItem(p.toString(), p, p === tableState.currentPage, false);
+        }
+
+        if (endP < totalPages) {
+            if (endP < totalPages - 1) {
+                var ell2 = document.createElement('li');
+                ell2.className = 'page-item disabled';
+                ell2.innerHTML = '<span class="page-link">&hellip;</span>';
+                pagContainer.appendChild(ell2);
+            }
+            addPageItem(totalPages.toString(), totalPages, false, false);
+        }
+
+        // Next
+        addPageItem('&raquo;', tableState.currentPage + 1, false, tableState.currentPage === totalPages);
+    }
+
+    /**
+     * Filter student table rows based on search input and status filter.
+     */
+    function filterStudentTable() {
+        updateFilteredIndices();
+        tableState.currentPage = 1;
+        renderPagination();
     }
 
     /**
@@ -166,12 +301,21 @@ define(['jquery'], function($) {
             var statusFilter = document.getElementById('student-status-filter');
             var clearBtn = document.getElementById('btn-clear-filters');
 
+            var pageSizeSelect = document.getElementById('table-page-size');
+
             if (searchInput) {
                 searchInput.addEventListener('input', filterStudentTable);
                 searchInput.addEventListener('keyup', filterStudentTable);
             }
             if (statusFilter) {
                 statusFilter.addEventListener('change', filterStudentTable);
+            }
+            if (pageSizeSelect) {
+                pageSizeSelect.addEventListener('change', function() {
+                    tableState.pageSize = this.value;
+                    tableState.currentPage = 1;
+                    renderPagination();
+                });
             }
             if (clearBtn) {
                 clearBtn.addEventListener('click', function() {
@@ -180,6 +324,10 @@ define(['jquery'], function($) {
                     filterStudentTable();
                 });
             }
+
+            // Initial calculation and pagination render
+            updateFilteredIndices();
+            renderPagination();
 
             // 2. Select / Deselect all export fields
             var selectAllBtn = document.getElementById('btn-select-all');
