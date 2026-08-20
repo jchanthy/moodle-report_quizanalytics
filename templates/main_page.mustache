@@ -273,18 +273,18 @@
                         <span class="input-group-text bg-light border-end-0">
                             <i class="fa fa-search text-muted"></i>
                         </span>
-                        <input type="text" id="student-search-input" class="form-control student-search-box border-start-0" placeholder="{{#str}} searchplaceholder, report_quizanalytics {{/str}}">
+                        <input type="text" id="student-search-input" class="form-control student-search-box border-start-0" placeholder="{{#str}} searchplaceholder, report_quizanalytics {{/str}}" oninput="window.filterQuizStudents && window.filterQuizStudents();" onkeyup="window.filterQuizStudents && window.filterQuizStudents();">
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-8">
-                    <select id="student-status-filter" class="form-select student-search-box">
+                    <select id="student-status-filter" class="form-select student-search-box" onchange="window.filterQuizStudents && window.filterQuizStudents();">
                         <option value="all">{{#str}} allstatuses, report_quizanalytics {{/str}}</option>
                         <option value="passed">{{#str}} onlypassed, report_quizanalytics {{/str}}</option>
                         <option value="failed">{{#str}} onlyfailed, report_quizanalytics {{/str}}</option>
                     </select>
                 </div>
                 <div class="col-md-2 col-sm-4">
-                    <button type="button" id="btn-clear-filters" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-1">
+                    <button type="button" id="btn-clear-filters" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-1" onclick="var s=document.getElementById('student-search-input'); var f=document.getElementById('student-status-filter'); if(s) s.value=''; if(f) f.value='all'; if(window.filterQuizStudents) window.filterQuizStudents();">
                         <i class="fa fa-times"></i> {{#str}} clearfilter, report_quizanalytics {{/str}}
                     </button>
                 </div>
@@ -460,7 +460,7 @@
 
                     <div class="modal-footer bg-light">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" data-bs-dismiss="modal">{{#str}} cancel, report_quizanalytics {{/str}}</button>
-                        <button type="submit" id="btn-submit-export" class="btn btn-primary">
+                        <button type="submit" id="btn-submit-export" class="btn btn-primary" onclick="if(window.handleQuizExportDownload) window.handleQuizExportDownload();">
                             <i class="fa fa-download me-1"></i> {{#str}} download, report_quizanalytics {{/str}}
                         </button>
                     </div>
@@ -473,20 +473,18 @@
 
 </div>
 
-{{#js}}
-document.addEventListener('DOMContentLoaded', function() {
-    // 1. Interactive Student Search & Filter
-    var searchInput = document.getElementById('student-search-input');
-    var statusFilter = document.getElementById('student-status-filter');
-    var clearBtn = document.getElementById('btn-clear-filters');
-    var rows = document.querySelectorAll('.student-attempt-row');
-    var noMatchRow = document.getElementById('no-matching-row');
-    var visibleCounter = document.getElementById('visible-count');
+<script>
+(function() {
+    window.filterQuizStudents = function() {
+        var searchInput = document.getElementById('student-search-input');
+        var statusFilter = document.getElementById('student-status-filter');
+        var rows = document.querySelectorAll('.student-attempt-row');
+        var noMatchRow = document.getElementById('no-matching-row');
+        var visibleCountElem = document.getElementById('visible-count');
 
-    function filterStudents() {
-        if (!rows.length) return;
-        var query = (searchInput ? searchInput.value.toLowerCase().trim() : '');
-        var status = (statusFilter ? statusFilter.value : 'all');
+        if (!rows || rows.length === 0) return;
+        var query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        var status = statusFilter ? statusFilter.value : 'all';
         var visibleCount = 0;
 
         rows.forEach(function(row) {
@@ -495,7 +493,11 @@ document.addEventListener('DOMContentLoaded', function() {
             var idnumber = (row.getAttribute('data-idnumber') || '').toLowerCase();
             var rowStatus = row.getAttribute('data-status') || '';
 
-            var matchesQuery = !query || name.indexOf(query) !== -1 || email.indexOf(query) !== -1 || idnumber.indexOf(query) !== -1;
+            var matchesQuery = !query ||
+                (name.indexOf(query) !== -1) ||
+                (email.indexOf(query) !== -1) ||
+                (idnumber.indexOf(query) !== -1);
+
             var matchesStatus = (status === 'all') || (rowStatus === status);
 
             if (matchesQuery && matchesStatus) {
@@ -506,110 +508,75 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        if (visibleCounter) {
-            visibleCounter.textContent = visibleCount;
+        if (visibleCountElem) {
+            visibleCountElem.textContent = visibleCount;
         }
-
         if (noMatchRow) {
             noMatchRow.style.display = (visibleCount === 0) ? '' : 'none';
         }
-    }
+    };
 
-    if (searchInput) {
-        searchInput.addEventListener('input', filterStudents);
-    }
-    if (statusFilter) {
-        statusFilter.addEventListener('change', filterStudents);
-    }
-    if (clearBtn) {
-        clearBtn.addEventListener('click', function() {
-            if (searchInput) searchInput.value = '';
-            if (statusFilter) statusFilter.value = 'all';
-            filterStudents();
-        });
-    }
-
-    // 2. Select / Deselect All Export Fields
-    var selectAllBtn = document.getElementById('btn-select-all');
-    var deselectAllBtn = document.getElementById('btn-deselect-all');
-    if (selectAllBtn && deselectAllBtn) {
-        selectAllBtn.addEventListener('click', function() {
-            document.querySelectorAll('.export-field').forEach(function(cb) {
-                cb.checked = true;
+    window.handleQuizExportDownload = function() {
+        try {
+            var selectedFields = [];
+            document.querySelectorAll('.export-field:checked').forEach(function(cb) {
+                selectedFields.push(cb.value);
             });
-            saveExportPreferences();
-        });
-        deselectAllBtn.addEventListener('click', function() {
-            document.querySelectorAll('.export-field').forEach(function(cb) {
-                cb.checked = false;
-            });
-            saveExportPreferences();
-        });
-    }
+            localStorage.setItem('report_quizanalytics_export_fields', JSON.stringify(selectedFields));
 
-    // 3. Export Preferences Persistence in LocalStorage
-    function saveExportPreferences() {
-        var selectedFields = [];
-        document.querySelectorAll('.export-field:checked').forEach(function(cb) {
-            selectedFields.push(cb.value);
-        });
-        localStorage.setItem('report_quizanalytics_export_fields', JSON.stringify(selectedFields));
+            var checkedFormat = document.querySelector('.export-format-radio:checked');
+            if (checkedFormat) {
+                localStorage.setItem('report_quizanalytics_export_format', checkedFormat.value);
+            }
+        } catch(e) {}
 
-        var checkedFormat = document.querySelector('.export-format-radio:checked');
-        if (checkedFormat) {
-            localStorage.setItem('report_quizanalytics_export_format', checkedFormat.value);
-        }
-    }
+        setTimeout(function() {
+            var modalEl = document.getElementById('exportModal');
+            if (modalEl) {
+                if (typeof $ !== 'undefined' && $.fn && $.fn.modal) {
+                    $('#exportModal').modal('hide');
+                }
+                if (typeof window.bootstrap !== 'undefined' && window.bootstrap.Modal) {
+                    var bs = window.bootstrap.Modal.getInstance(modalEl);
+                    if (bs) bs.hide();
+                }
+                var dismiss = modalEl.querySelector('[data-bs-dismiss="modal"], [data-dismiss="modal"], .btn-close');
+                if (dismiss) dismiss.click();
+            }
+            setTimeout(function() {
+                var bds = document.querySelectorAll('.modal-backdrop');
+                bds.forEach(function(b) { b.remove(); });
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('padding-right');
+                document.body.style.removeProperty('overflow');
+            }, 200);
+        }, 150);
+    };
 
-    function loadExportPreferences() {
+    // Auto-load saved export settings on render
+    try {
         var savedFields = localStorage.getItem('report_quizanalytics_export_fields');
         if (savedFields) {
-            try {
-                var fieldList = JSON.parse(savedFields);
+            var fieldList = JSON.parse(savedFields);
+            if (Array.isArray(fieldList) && fieldList.length > 0) {
                 document.querySelectorAll('.export-field').forEach(function(cb) {
                     cb.checked = (fieldList.indexOf(cb.value) !== -1);
                 });
-            } catch (e) {}
+            }
         }
-
         var savedFormat = localStorage.getItem('report_quizanalytics_export_format');
         if (savedFormat) {
             var formatRadio = document.querySelector('.export-format-radio[value="' + savedFormat + '"]');
-            if (formatRadio) {
-                formatRadio.checked = true;
-            }
+            if (formatRadio) formatRadio.checked = true;
         }
-    }
+    } catch(e) {}
+})();
+</script>
 
-    loadExportPreferences();
-
-    document.querySelectorAll('.export-field, .export-format-radio').forEach(function(el) {
-        el.addEventListener('change', saveExportPreferences);
-    });
-
-    // 4. Close Modal on Export Submit (Prevent modal reopening/hanging)
-    var exportForm = document.getElementById('export-report-form');
-    if (exportForm) {
-        exportForm.addEventListener('submit', function() {
-            saveExportPreferences();
-            setTimeout(function() {
-                var modalEl = document.getElementById('exportModal');
-                if (modalEl) {
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                        var modalInstance = bootstrap.Modal.getInstance(modalEl);
-                        if (modalInstance) {
-                            modalInstance.hide();
-                        }
-                    } else if (typeof $ !== 'undefined' && $.fn.modal) {
-                        $('#exportModal').modal('hide');
-                    }
-                    var closeBtn = modalEl.querySelector('[data-bs-dismiss="modal"], [data-dismiss="modal"]');
-                    if (closeBtn) {
-                        closeBtn.click();
-                    }
-                }
-            }, 300);
-        });
-    }
+{{#js}}
+require(['report_quizanalytics/charts'], function(charts) {
+    charts.init();
 });
 {{/js}}
+
+
