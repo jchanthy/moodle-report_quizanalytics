@@ -2,6 +2,8 @@
 
 An advanced, course-level analytics and reporting plugin for Moodle 5.0+ (and Moodle 4.x), providing teachers and academic managers with actionable visual insights into quiz performance, attempt trends, question difficulty, and customizable Excel/CSV exports.
 
+![Quiz and Assessment Analytics Dashboard](pix/screenshot.png)
+
 ---
 
 ## 🌟 Key Features
