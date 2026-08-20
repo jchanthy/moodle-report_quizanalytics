@@ -116,3 +116,4 @@ $string['field_maxgrade'] = 'Max Grade';
 $string['field_percentage'] = 'Percentage (%)';
 $string['field_status'] = 'Pass/Fail Status';
 $string['privacy:metadata'] = 'The Quiz & Assessment Analytics report plugin does not store any personal data. It only reads and displays assessment records already in Moodle.';
+$string['eventreportviewed'] = 'Quiz analytics report viewed';

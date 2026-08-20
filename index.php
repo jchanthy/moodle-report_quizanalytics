@@ -33,11 +33,12 @@ $context = context_course::instance($course->id);
 require_login($course);
 require_capability('report/quizanalytics:view', $context);
 
-// Trigger course report viewed event.
-$event = \core\event\course_report_viewed::create([
+// Trigger report viewed event.
+$event = \report_quizanalytics\event\report_viewed::create([
     'context' => $context,
+    'courseid' => $course->id,
     'other' => [
-        'report' => 'quizanalytics',
+        'quizid' => $quizid,
     ],
 ]);
 $event->trigger();
