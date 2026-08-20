@@ -18,122 +18,168 @@
     @template report_quizanalytics/main_page
 
     Template for the Quiz & Assessment Analytics main dashboard.
-
-    Context variables required for this template:
-    * courseid - Course ID
-    * quizoptions - Array of quiz options for selector
-    * summary - Aggregated metrics
-    * distribution - Score distribution buckets
-    * attempts - Student attempts list
 }}
+
+<style>
+.quiz-analytics-header {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e9ecef;
+}
+.quiz-select-control {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+    font-weight: 500;
+    width: 100%;
+    max-width: 580px;
+    line-height: 1.5;
+}
+.quiz-select-control:focus {
+    background-color: #ffffff;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+.metric-card {
+    border-radius: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+.student-search-box {
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+.student-search-box:focus {
+    background-color: #ffffff;
+}
+</style>
 
 <div class="report-quizanalytics-container container-fluid p-0 mb-5">
 
     {{^hasquizzes}}
-        <div class="alert alert-info d-flex align-items-center" role="alert">
+        <div class="alert alert-info d-flex align-items-center shadow-sm" role="alert">
+            <i class="fa fa-info-circle fa-2x me-3 text-info"></i>
             <div>
-                <strong>{{#str}} noquizzesfound, report_quizanalytics {{/str}}</strong>
+                <h5 class="alert-heading mb-1">{{#str}} noquizzesfound, report_quizanalytics {{/str}}</h5>
+                <p class="mb-0 text-muted">Please add quizzes to this course to start viewing assessment analytics.</p>
             </div>
         </div>
     {{/hasquizzes}}
 
     {{#hasquizzes}}
-    <!-- Top Action Bar -->
-    <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <div class="d-flex align-items-center gap-2">
-                <label for="quiz-select" class="fw-bold mb-0 text-nowrap">
-                    <i class="fa fa-filter text-primary me-1"></i>{{#str}} selectquiz, report_quizanalytics {{/str}}:
-                </label>
-                <select id="quiz-select" class="form-select form-select-sm" onchange="window.location.href='?id={{courseid}}&quizid=' + this.value;">
-                    {{#quizoptions}}
-                        <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}} ({{attempts}} attempts)</option>
-                    {{/quizoptions}}
-                </select>
+    <!-- Redesigned Top Action & Quiz Selector Bar -->
+    <div class="quiz-analytics-header mb-4">
+        <div class="row align-items-center gy-3">
+            <div class="col-lg-7 col-md-12">
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2">
+                    <label for="quiz-select" class="fw-bold mb-0 text-nowrap d-flex align-items-center">
+                        <i class="fa fa-graduation-cap text-primary fs-5 me-2"></i>
+                        <span>{{#str}} selectquiz, report_quizanalytics {{/str}}:</span>
+                    </label>
+                    <select id="quiz-select" class="form-select quiz-select-control" onchange="window.location.href='?id={{courseid}}&quizid=' + this.value;">
+                        {{#quizoptions}}
+                            <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}} ({{attempts}} attempts)</option>
+                        {{/quizoptions}}
+                    </select>
+                </div>
             </div>
 
-            <div class="d-flex align-items-center gap-3">
-                <small class="text-muted d-none d-md-inline">
-                    <i class="fa fa-clock-o me-1"></i>{{#str}} refreshedat, report_quizanalytics, {{refreshedat}} {{/str}}
-                </small>
-                <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1 shadow-sm" data-toggle="modal" data-bs-toggle="modal" data-target="#exportModal" data-bs-target="#exportModal">
-                    <i class="fa fa-download"></i> {{#str}} exportreport, report_quizanalytics {{/str}}
-                </button>
+            <div class="col-lg-5 col-md-12">
+                <div class="d-flex flex-wrap justify-content-lg-end align-items-center gap-2">
+                    <span class="badge bg-light text-dark border px-3 py-2 d-inline-flex align-items-center">
+                        <i class="fa fa-clock-o text-muted me-2"></i>
+                        <span class="small">{{refreshedat}}</span>
+                    </span>
+                    <button type="button" class="btn btn-primary px-3 py-2 shadow-sm d-inline-flex align-items-center gap-2 fw-semibold" data-toggle="modal" data-bs-toggle="modal" data-target="#exportModal" data-bs-target="#exportModal">
+                        <i class="fa fa-download"></i>
+                        <span>{{#str}} exportreport, report_quizanalytics {{/str}}</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     {{^hasattempts}}
-        <div class="alert alert-warning" role="alert">
-            <i class="fa fa-info-circle me-1"></i> {{#str}} noattemptsfound, report_quizanalytics {{/str}}
+        <div class="alert alert-warning shadow-sm d-flex align-items-center" role="alert">
+            <i class="fa fa-exclamation-triangle fa-2x me-3 text-warning"></i>
+            <div>
+                <strong>{{#str}} noattemptsfound, report_quizanalytics {{/str}}</strong>
+            </div>
         </div>
     {{/hasattempts}}
 
     {{#hasattempts}}
     <!-- Key Metric Summary Cards -->
     <div class="row g-3 mb-4">
-        <div class="col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 bg-light-primary border-start border-primary border-4">
-                <div class="card-body">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card metric-card border-0 shadow-sm h-100 border-start border-primary border-4 bg-white">
+                <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="text-muted small text-uppercase fw-bold">{{#str}} totalattempts, report_quizanalytics {{/str}}</span>
                             <h3 class="mb-0 fw-bold text-dark mt-1">{{summary.totalattempts}}</h3>
                             <small class="text-secondary">{{summary.distinctstudents}} distinct students</small>
                         </div>
-                        <div class="p-3 bg-white rounded-circle shadow-xs">
-                            <i class="fa fa-users fa-2x text-primary"></i>
+                        <div class="p-3 bg-light rounded-circle text-primary">
+                            <i class="fa fa-users fa-2x"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 bg-light-success border-start border-success border-4">
-                <div class="card-body">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card metric-card border-0 shadow-sm h-100 border-start border-success border-4 bg-white">
+                <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="text-muted small text-uppercase fw-bold">{{#str}} avggrade, report_quizanalytics {{/str}}</span>
                             <h3 class="mb-0 fw-bold text-success mt-1">{{summary.avggrade}} <span class="fs-6 text-muted">/ {{summary.maxgrade}}</span></h3>
                             <small class="text-secondary">Median: {{summary.mediangrade}}</small>
                         </div>
-                        <div class="p-3 bg-white rounded-circle shadow-xs">
-                            <i class="fa fa-line-chart fa-2x text-success"></i>
+                        <div class="p-3 bg-light rounded-circle text-success">
+                            <i class="fa fa-line-chart fa-2x"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 bg-light-info border-start border-info border-4">
-                <div class="card-body">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card metric-card border-0 shadow-sm h-100 border-start border-info border-4 bg-white">
+                <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="text-muted small text-uppercase fw-bold">{{#str}} passrate, report_quizanalytics {{/str}}</span>
                             <h3 class="mb-0 fw-bold text-info mt-1">{{summary.passrate}}%</h3>
-                            <small class="text-success">{{summary.passcount}} passed</small> / <small class="text-danger">{{summary.failcount}} failed</small>
+                            <small class="text-success fw-semibold">{{summary.passcount}} passed</small> &bull; <small class="text-danger fw-semibold">{{summary.failcount}} failed</small>
                         </div>
-                        <div class="p-3 bg-white rounded-circle shadow-xs">
-                            <i class="fa fa-check-circle fa-2x text-info"></i>
+                        <div class="p-3 bg-light rounded-circle text-info">
+                            <i class="fa fa-check-circle fa-2x"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 bg-light-warning border-start border-warning border-4">
-                <div class="card-body">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card metric-card border-0 shadow-sm h-100 border-start border-warning border-4 bg-white">
+                <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="text-muted small text-uppercase fw-bold">{{#str}} avgduration, report_quizanalytics {{/str}}</span>
                             <h3 class="mb-0 fw-bold text-warning mt-1">{{summary.avgduration}}</h3>
                             <small class="text-secondary">High: {{summary.highestgrade}} | Low: {{summary.lowestgrade}}</small>
                         </div>
-                        <div class="p-3 bg-white rounded-circle shadow-xs">
-                            <i class="fa fa-hourglass-half fa-2x text-warning"></i>
+                        <div class="p-3 bg-light rounded-circle text-warning">
+                            <i class="fa fa-hourglass-half fa-2x"></i>
                         </div>
                     </div>
                 </div>
@@ -144,15 +190,15 @@
     <!-- Charts & Score Distribution Section -->
     <div class="row g-3 mb-4">
         <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100">
+            <div class="card border-0 shadow-sm h-100 rounded-3">
                 <div class="card-header bg-white border-bottom py-3">
                     <h5 class="card-title mb-0 fw-bold">
                         <i class="fa fa-bar-chart text-primary me-2"></i>{{#str}} scoredistribution, report_quizanalytics {{/str}}
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted small">{{#str}} scoredistribution_desc, report_quizanalytics {{/str}}</p>
-                    <div class="score-buckets my-3">
+                    <p class="text-muted small mb-3">{{#str}} scoredistribution_desc, report_quizanalytics {{/str}}</p>
+                    <div class="score-buckets">
                         {{#distribution}}
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1 small">
@@ -171,14 +217,14 @@
 
         {{#hasquestions}}
         <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100">
+            <div class="card border-0 shadow-sm h-100 rounded-3">
                 <div class="card-header bg-white border-bottom py-3">
                     <h5 class="card-title mb-0 fw-bold">
                         <i class="fa fa-question-circle text-info me-2"></i>{{#str}} questioninsights, report_quizanalytics {{/str}}
                     </h5>
                 </div>
                 <div class="card-body p-0">
-                    <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                    <div class="table-responsive" style="max-height: 330px; overflow-y: auto;">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr class="small text-uppercase">
@@ -192,7 +238,7 @@
                                 {{#questions}}
                                 <tr>
                                     <td class="fw-bold">{{slot}}</td>
-                                    <td class="text-truncate" style="max-width: 200px;" title="{{name}}">{{name}}</td>
+                                    <td class="text-truncate" style="max-width: 220px;" title="{{name}}">{{name}}</td>
                                     <td>
                                         <span class="{{badgeclass}}">{{facility}}%</span>
                                     </td>
@@ -208,17 +254,46 @@
         {{/hasquestions}}
     </div>
 
-    <!-- Detailed Student Attempts Table -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0 fw-bold">
-                <i class="fa fa-table text-secondary me-2"></i>{{#str}} studentperformance, report_quizanalytics {{/str}}
-            </h5>
-            <span class="badge bg-light text-dark border">{{summary.totalattempts}} total records</span>
+    <!-- Student Performance & Filter Table -->
+    <div class="card border-0 shadow-sm mb-4 rounded-3">
+        <div class="card-header bg-white border-bottom py-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <h5 class="card-title mb-0 fw-bold">
+                    <i class="fa fa-table text-secondary me-2"></i>{{#str}} studentperformance, report_quizanalytics {{/str}}
+                </h5>
+                <span class="badge bg-light text-dark border px-3 py-2" id="records-counter-badge">
+                    {{#str}} showingrecords, report_quizanalytics, {{summary.totalattempts}} {{/str}}
+                </span>
+            </div>
+
+            <!-- Search and Filter Controls -->
+            <div class="row g-2 align-items-center">
+                <div class="col-md-6 col-sm-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fa fa-search text-muted"></i>
+                        </span>
+                        <input type="text" id="student-search-input" class="form-control student-search-box border-start-0" placeholder="{{#str}} searchplaceholder, report_quizanalytics {{/str}}">
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-8">
+                    <select id="student-status-filter" class="form-select student-search-box">
+                        <option value="all">{{#str}} allstatuses, report_quizanalytics {{/str}}</option>
+                        <option value="passed">{{#str}} onlypassed, report_quizanalytics {{/str}}</option>
+                        <option value="failed">{{#str}} onlyfailed, report_quizanalytics {{/str}}</option>
+                    </select>
+                </div>
+                <div class="col-md-2 col-sm-4">
+                    <button type="button" id="btn-clear-filters" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-1">
+                        <i class="fa fa-times"></i> {{#str}} clearfilter, report_quizanalytics {{/str}}
+                    </button>
+                </div>
+            </div>
         </div>
+
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover table-striped align-middle mb-0">
+                <table class="table table-hover table-striped align-middle mb-0" id="student-attempts-table">
                     <thead class="table-light">
                         <tr class="small text-uppercase text-secondary">
                             <th>{{#str}} studentname, report_quizanalytics {{/str}}</th>
@@ -231,9 +306,9 @@
                             <th>{{#str}} status, report_quizanalytics {{/str}}</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="student-attempts-tbody">
                         {{#attempts}}
-                        <tr>
+                        <tr class="student-attempt-row" data-name="{{fullname}}" data-email="{{email}}" data-idnumber="{{idnumber}}" data-status="{{#ispass}}passed{{/ispass}}{{^ispass}}failed{{/ispass}}">
                             <td class="fw-bold">
                                 <a href="{{{config.wwwroot}}}/user/view.php?id={{userid}}&course={{courseid}}">
                                     {{fullname}}
@@ -245,9 +320,7 @@
                             <td class="small">{{timetaken}}</td>
                             <td class="fw-bold">{{grade}} / {{maxgrade}}</td>
                             <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="small fw-semibold">{{percentage}}%</span>
-                                </div>
+                                <span class="small fw-semibold">{{percentage}}%</span>
                             </td>
                             <td>
                                 {{#ispass}}
@@ -259,6 +332,12 @@
                             </td>
                         </tr>
                         {{/attempts}}
+                        <tr id="no-matching-row" style="display: none;">
+                            <td colspan="8" class="text-center py-4 text-muted">
+                                <i class="fa fa-search fa-2x mb-2 d-block text-secondary"></i>
+                                {{#str}} nomatchingrecords, report_quizanalytics {{/str}}
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -269,7 +348,7 @@
     <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 shadow">
-                <form action="{{exporturl}}" method="post" target="_blank">
+                <form id="export-report-form" action="{{exporturl}}" method="post">
                     <input type="hidden" name="sesskey" value="{{config.sesskey}}">
                     <input type="hidden" name="id" value="{{courseid}}">
                     <input type="hidden" name="quizid" value="{{selectedquizid}}">
@@ -287,13 +366,13 @@
                             <label class="form-label fw-bold">{{#str}} exportformat, report_quizanalytics {{/str}}</label>
                             <div class="d-flex gap-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="format" id="format_excel" value="excel" checked>
+                                    <input class="form-check-input export-format-radio" type="radio" name="format" id="format_excel" value="excel" checked>
                                     <label class="form-check-label fw-semibold" for="format_excel">
                                         <i class="fa fa-file-excel-o text-success me-1"></i> {{#str}} format_excel, report_quizanalytics {{/str}}
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="format" id="format_csv" value="csv">
+                                    <input class="form-check-input export-format-radio" type="radio" name="format" id="format_csv" value="csv">
                                     <label class="form-check-label fw-semibold" for="format_csv">
                                         <i class="fa fa-file-text-o text-secondary me-1"></i> {{#str}} format_csv, report_quizanalytics {{/str}}
                                     </label>
@@ -381,7 +460,7 @@
 
                     <div class="modal-footer bg-light">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" data-bs-dismiss="modal">{{#str}} cancel, report_quizanalytics {{/str}}</button>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" id="btn-submit-export" class="btn btn-primary">
                             <i class="fa fa-download me-1"></i> {{#str}} download, report_quizanalytics {{/str}}
                         </button>
                     </div>
@@ -396,6 +475,61 @@
 
 {{#js}}
 document.addEventListener('DOMContentLoaded', function() {
+    // 1. Interactive Student Search & Filter
+    var searchInput = document.getElementById('student-search-input');
+    var statusFilter = document.getElementById('student-status-filter');
+    var clearBtn = document.getElementById('btn-clear-filters');
+    var rows = document.querySelectorAll('.student-attempt-row');
+    var noMatchRow = document.getElementById('no-matching-row');
+    var visibleCounter = document.getElementById('visible-count');
+
+    function filterStudents() {
+        if (!rows.length) return;
+        var query = (searchInput ? searchInput.value.toLowerCase().trim() : '');
+        var status = (statusFilter ? statusFilter.value : 'all');
+        var visibleCount = 0;
+
+        rows.forEach(function(row) {
+            var name = (row.getAttribute('data-name') || '').toLowerCase();
+            var email = (row.getAttribute('data-email') || '').toLowerCase();
+            var idnumber = (row.getAttribute('data-idnumber') || '').toLowerCase();
+            var rowStatus = row.getAttribute('data-status') || '';
+
+            var matchesQuery = !query || name.indexOf(query) !== -1 || email.indexOf(query) !== -1 || idnumber.indexOf(query) !== -1;
+            var matchesStatus = (status === 'all') || (rowStatus === status);
+
+            if (matchesQuery && matchesStatus) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        if (visibleCounter) {
+            visibleCounter.textContent = visibleCount;
+        }
+
+        if (noMatchRow) {
+            noMatchRow.style.display = (visibleCount === 0) ? '' : 'none';
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', filterStudents);
+    }
+    if (statusFilter) {
+        statusFilter.addEventListener('change', filterStudents);
+    }
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            if (searchInput) searchInput.value = '';
+            if (statusFilter) statusFilter.value = 'all';
+            filterStudents();
+        });
+    }
+
+    // 2. Select / Deselect All Export Fields
     var selectAllBtn = document.getElementById('btn-select-all');
     var deselectAllBtn = document.getElementById('btn-deselect-all');
     if (selectAllBtn && deselectAllBtn) {
@@ -403,11 +537,78 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.export-field').forEach(function(cb) {
                 cb.checked = true;
             });
+            saveExportPreferences();
         });
         deselectAllBtn.addEventListener('click', function() {
             document.querySelectorAll('.export-field').forEach(function(cb) {
                 cb.checked = false;
             });
+            saveExportPreferences();
+        });
+    }
+
+    // 3. Export Preferences Persistence in LocalStorage
+    function saveExportPreferences() {
+        var selectedFields = [];
+        document.querySelectorAll('.export-field:checked').forEach(function(cb) {
+            selectedFields.push(cb.value);
+        });
+        localStorage.setItem('report_quizanalytics_export_fields', JSON.stringify(selectedFields));
+
+        var checkedFormat = document.querySelector('.export-format-radio:checked');
+        if (checkedFormat) {
+            localStorage.setItem('report_quizanalytics_export_format', checkedFormat.value);
+        }
+    }
+
+    function loadExportPreferences() {
+        var savedFields = localStorage.getItem('report_quizanalytics_export_fields');
+        if (savedFields) {
+            try {
+                var fieldList = JSON.parse(savedFields);
+                document.querySelectorAll('.export-field').forEach(function(cb) {
+                    cb.checked = (fieldList.indexOf(cb.value) !== -1);
+                });
+            } catch (e) {}
+        }
+
+        var savedFormat = localStorage.getItem('report_quizanalytics_export_format');
+        if (savedFormat) {
+            var formatRadio = document.querySelector('.export-format-radio[value="' + savedFormat + '"]');
+            if (formatRadio) {
+                formatRadio.checked = true;
+            }
+        }
+    }
+
+    loadExportPreferences();
+
+    document.querySelectorAll('.export-field, .export-format-radio').forEach(function(el) {
+        el.addEventListener('change', saveExportPreferences);
+    });
+
+    // 4. Close Modal on Export Submit (Prevent modal reopening/hanging)
+    var exportForm = document.getElementById('export-report-form');
+    if (exportForm) {
+        exportForm.addEventListener('submit', function() {
+            saveExportPreferences();
+            setTimeout(function() {
+                var modalEl = document.getElementById('exportModal');
+                if (modalEl) {
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                        if (modalInstance) {
+                            modalInstance.hide();
+                        }
+                    } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                        $('#exportModal').modal('hide');
+                    }
+                    var closeBtn = modalEl.querySelector('[data-bs-dismiss="modal"], [data-dismiss="modal"]');
+                    if (closeBtn) {
+                        closeBtn.click();
+                    }
+                }
+            }, 300);
         });
     }
 });

@@ -117,3 +117,15 @@ $string['field_percentage'] = 'Percentage (%)';
 $string['field_status'] = 'Pass/Fail Status';
 $string['privacy:metadata'] = 'The Quiz & Assessment Analytics report plugin does not store any personal data. It only reads and displays assessment records already in Moodle.';
 $string['eventreportviewed'] = 'Quiz analytics report viewed';
+
+// Search & Filter
+$string['searchstudents'] = 'Search students';
+$string['searchplaceholder'] = 'Search by student name, email, or ID...';
+$string['filterstatus'] = 'Filter by result';
+$string['allstatuses'] = 'All Results (Pass & Fail)';
+$string['onlypassed'] = 'Passed Only';
+$string['onlyfailed'] = 'Failed Only';
+$string['clearfilter'] = 'Clear';
+$string['showingrecords'] = 'Showing <strong id="visible-count">{$a}</strong> records';
+$string['nomatchingrecords'] = 'No matching student attempts found.';
+
