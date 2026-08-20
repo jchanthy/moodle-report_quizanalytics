@@ -1,0 +1,414 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_quizanalytics/main_page
+
+    Template for the Quiz & Assessment Analytics main dashboard.
+
+    Context variables required for this template:
+    * courseid - Course ID
+    * quizoptions - Array of quiz options for selector
+    * summary - Aggregated metrics
+    * distribution - Score distribution buckets
+    * attempts - Student attempts list
+}}
+
+<div class="report-quizanalytics-container container-fluid p-0 mb-5">
+
+    {{^hasquizzes}}
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+            <div>
+                <strong>{{#str}} noquizzesfound, report_quizanalytics {{/str}}</strong>
+            </div>
+        </div>
+    {{/hasquizzes}}
+
+    {{#hasquizzes}}
+    <!-- Top Action Bar -->
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2">
+                <label for="quiz-select" class="fw-bold mb-0 text-nowrap">
+                    <i class="fa fa-filter text-primary me-1"></i>{{#str}} selectquiz, report_quizanalytics {{/str}}:
+                </label>
+                <select id="quiz-select" class="form-select form-select-sm" onchange="window.location.href='?id={{courseid}}&quizid=' + this.value;">
+                    {{#quizoptions}}
+                        <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}} ({{attempts}} attempts)</option>
+                    {{/quizoptions}}
+                </select>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <small class="text-muted d-none d-md-inline">
+                    <i class="fa fa-clock-o me-1"></i>{{#str}} refreshedat, report_quizanalytics, {{refreshedat}} {{/str}}
+                </small>
+                <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1 shadow-sm" data-toggle="modal" data-bs-toggle="modal" data-target="#exportModal" data-bs-target="#exportModal">
+                    <i class="fa fa-download"></i> {{#str}} exportreport, report_quizanalytics {{/str}}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{^hasattempts}}
+        <div class="alert alert-warning" role="alert">
+            <i class="fa fa-info-circle me-1"></i> {{#str}} noattemptsfound, report_quizanalytics {{/str}}
+        </div>
+    {{/hasattempts}}
+
+    {{#hasattempts}}
+    <!-- Key Metric Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 bg-light-primary border-start border-primary border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold">{{#str}} totalattempts, report_quizanalytics {{/str}}</span>
+                            <h3 class="mb-0 fw-bold text-dark mt-1">{{summary.totalattempts}}</h3>
+                            <small class="text-secondary">{{summary.distinctstudents}} distinct students</small>
+                        </div>
+                        <div class="p-3 bg-white rounded-circle shadow-xs">
+                            <i class="fa fa-users fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 bg-light-success border-start border-success border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold">{{#str}} avggrade, report_quizanalytics {{/str}}</span>
+                            <h3 class="mb-0 fw-bold text-success mt-1">{{summary.avggrade}} <span class="fs-6 text-muted">/ {{summary.maxgrade}}</span></h3>
+                            <small class="text-secondary">Median: {{summary.mediangrade}}</small>
+                        </div>
+                        <div class="p-3 bg-white rounded-circle shadow-xs">
+                            <i class="fa fa-line-chart fa-2x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 bg-light-info border-start border-info border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold">{{#str}} passrate, report_quizanalytics {{/str}}</span>
+                            <h3 class="mb-0 fw-bold text-info mt-1">{{summary.passrate}}%</h3>
+                            <small class="text-success">{{summary.passcount}} passed</small> / <small class="text-danger">{{summary.failcount}} failed</small>
+                        </div>
+                        <div class="p-3 bg-white rounded-circle shadow-xs">
+                            <i class="fa fa-check-circle fa-2x text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 bg-light-warning border-start border-warning border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold">{{#str}} avgduration, report_quizanalytics {{/str}}</span>
+                            <h3 class="mb-0 fw-bold text-warning mt-1">{{summary.avgduration}}</h3>
+                            <small class="text-secondary">High: {{summary.highestgrade}} | Low: {{summary.lowestgrade}}</small>
+                        </div>
+                        <div class="p-3 bg-white rounded-circle shadow-xs">
+                            <i class="fa fa-hourglass-half fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts & Score Distribution Section -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="card-title mb-0 fw-bold">
+                        <i class="fa fa-bar-chart text-primary me-2"></i>{{#str}} scoredistribution, report_quizanalytics {{/str}}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">{{#str}} scoredistribution_desc, report_quizanalytics {{/str}}</p>
+                    <div class="score-buckets my-3">
+                        {{#distribution}}
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1 small">
+                                    <span class="fw-semibold">{{label}}</span>
+                                    <span class="badge" style="background-color: {{color}}; color: #fff;">{{count}} students ({{percentage}}%)</span>
+                                </div>
+                                <div class="progress" style="height: 12px; border-radius: 6px;">
+                                    <div class="progress-bar" role="progressbar" style="width: {{percentage}}%; background-color: {{color}};" aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        {{/distribution}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{#hasquestions}}
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="card-title mb-0 fw-bold">
+                        <i class="fa fa-question-circle text-info me-2"></i>{{#str}} questioninsights, report_quizanalytics {{/str}}
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr class="small text-uppercase">
+                                    <th>#</th>
+                                    <th>{{#str}} question, report_quizanalytics {{/str}}</th>
+                                    <th>{{#str}} facilityindex, report_quizanalytics {{/str}}</th>
+                                    <th>{{#str}} questiontype, report_quizanalytics {{/str}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#questions}}
+                                <tr>
+                                    <td class="fw-bold">{{slot}}</td>
+                                    <td class="text-truncate" style="max-width: 200px;" title="{{name}}">{{name}}</td>
+                                    <td>
+                                        <span class="{{badgeclass}}">{{facility}}%</span>
+                                    </td>
+                                    <td><span class="badge bg-secondary">{{qtype}}</span></td>
+                                </tr>
+                                {{/questions}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/hasquestions}}
+    </div>
+
+    <!-- Detailed Student Attempts Table -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 fw-bold">
+                <i class="fa fa-table text-secondary me-2"></i>{{#str}} studentperformance, report_quizanalytics {{/str}}
+            </h5>
+            <span class="badge bg-light text-dark border">{{summary.totalattempts}} total records</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle mb-0">
+                    <thead class="table-light">
+                        <tr class="small text-uppercase text-secondary">
+                            <th>{{#str}} studentname, report_quizanalytics {{/str}}</th>
+                            <th>{{#str}} email, report_quizanalytics {{/str}}</th>
+                            <th>{{#str}} attemptnumber, report_quizanalytics {{/str}}</th>
+                            <th>{{#str}} timefinish, report_quizanalytics {{/str}}</th>
+                            <th>{{#str}} timetaken, report_quizanalytics {{/str}}</th>
+                            <th>{{#str}} grade, report_quizanalytics {{/str}}</th>
+                            <th>{{#str}} percentage, report_quizanalytics {{/str}}</th>
+                            <th>{{#str}} status, report_quizanalytics {{/str}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#attempts}}
+                        <tr>
+                            <td class="fw-bold">
+                                <a href="{{{config.wwwroot}}}/user/view.php?id={{userid}}&course={{courseid}}">
+                                    {{fullname}}
+                                </a>
+                            </td>
+                            <td class="text-muted small">{{email}}</td>
+                            <td><span class="badge bg-light text-dark border">#{{attempt}}</span></td>
+                            <td class="small">{{timefinish}}</td>
+                            <td class="small">{{timetaken}}</td>
+                            <td class="fw-bold">{{grade}} / {{maxgrade}}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="small fw-semibold">{{percentage}}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                {{#ispass}}
+                                    <span class="badge bg-success text-white">{{status}}</span>
+                                {{/ispass}}
+                                {{^ispass}}
+                                    <span class="badge bg-danger text-white">{{status}}</span>
+                                {{/ispass}}
+                            </td>
+                        </tr>
+                        {{/attempts}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Customization Modal -->
+    <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow">
+                <form action="{{exporturl}}" method="post" target="_blank">
+                    <input type="hidden" name="sesskey" value="{{config.sesskey}}">
+                    <input type="hidden" name="id" value="{{courseid}}">
+                    <input type="hidden" name="quizid" value="{{selectedquizid}}">
+
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="exportModalLabel">
+                            <i class="fa fa-file-excel-o me-2"></i>{{#str}} exportreport, report_quizanalytics {{/str}}
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body p-4">
+                        <!-- Format Selection -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{#str}} exportformat, report_quizanalytics {{/str}}</label>
+                            <div class="d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="format" id="format_excel" value="excel" checked>
+                                    <label class="form-check-label fw-semibold" for="format_excel">
+                                        <i class="fa fa-file-excel-o text-success me-1"></i> {{#str}} format_excel, report_quizanalytics {{/str}}
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="format" id="format_csv" value="csv">
+                                    <label class="form-check-label fw-semibold" for="format_csv">
+                                        <i class="fa fa-file-text-o text-secondary me-1"></i> {{#str}} format_csv, report_quizanalytics {{/str}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Custom Field Selection -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label fw-bold mb-0">{{#str}} choosefields, report_quizanalytics {{/str}}</label>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-select-all">{{#str}} selectall, report_quizanalytics {{/str}}</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-deselect-all">{{#str}} deselectall, report_quizanalytics {{/str}}</button>
+                                </div>
+                            </div>
+
+                            <div class="row g-2 p-3 bg-light rounded border">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="fullname" id="f_fullname" checked>
+                                        <label class="form-check-label" for="f_fullname">{{#str}} field_fullname, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="firstname" id="f_firstname">
+                                        <label class="form-check-label" for="f_firstname">{{#str}} field_firstname, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="lastname" id="f_lastname">
+                                        <label class="form-check-label" for="f_lastname">{{#str}} field_lastname, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="email" id="f_email" checked>
+                                        <label class="form-check-label" for="f_email">{{#str}} field_email, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="idnumber" id="f_idnumber" checked>
+                                        <label class="form-check-label" for="f_idnumber">{{#str}} field_idnumber, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="department" id="f_department">
+                                        <label class="form-check-label" for="f_department">{{#str}} field_department, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="quizname" id="f_quizname" checked>
+                                        <label class="form-check-label" for="f_quizname">{{#str}} field_quizname, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="attempt" id="f_attempt" checked>
+                                        <label class="form-check-label" for="f_attempt">{{#str}} field_attempt, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="timestart" id="f_timestart">
+                                        <label class="form-check-label" for="f_timestart">{{#str}} field_timestart, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="timefinish" id="f_timefinish" checked>
+                                        <label class="form-check-label" for="f_timefinish">{{#str}} field_timefinish, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="timetaken" id="f_timetaken" checked>
+                                        <label class="form-check-label" for="f_timetaken">{{#str}} field_timetaken, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="grade" id="f_grade" checked>
+                                        <label class="form-check-label" for="f_grade">{{#str}} field_grade, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="percentage" id="f_percentage" checked>
+                                        <label class="form-check-label" for="f_percentage">{{#str}} field_percentage, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input export-field" type="checkbox" name="fields[]" value="status" id="f_status" checked>
+                                        <label class="form-check-label" for="f_status">{{#str}} field_status, report_quizanalytics {{/str}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" data-bs-dismiss="modal">{{#str}} cancel, report_quizanalytics {{/str}}</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-download me-1"></i> {{#str}} download, report_quizanalytics {{/str}}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{/hasattempts}}
+    {{/hasquizzes}}
+
+</div>
+
+{{#js}}
+document.addEventListener('DOMContentLoaded', function() {
+    var selectAllBtn = document.getElementById('btn-select-all');
+    var deselectAllBtn = document.getElementById('btn-deselect-all');
+    if (selectAllBtn && deselectAllBtn) {
+        selectAllBtn.addEventListener('click', function() {
+            document.querySelectorAll('.export-field').forEach(function(cb) {
+                cb.checked = true;
+            });
+        });
+        deselectAllBtn.addEventListener('click', function() {
+            document.querySelectorAll('.export-field').forEach(function(cb) {
+                cb.checked = false;
+            });
+        });
+    }
+});
+{{/js}}

@@ -1,0 +1,17 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node / Build artifacts
+node_modules/
+npm-debug.log
+
+# Composer
+vendor/
+composer.lock
