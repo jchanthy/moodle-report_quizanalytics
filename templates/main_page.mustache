@@ -310,12 +310,16 @@
                         {{#attempts}}
                         <tr class="student-attempt-row" data-name="{{fullname}}" data-email="{{email}}" data-idnumber="{{idnumber}}" data-status="{{#ispass}}passed{{/ispass}}{{^ispass}}failed{{/ispass}}">
                             <td class="fw-bold">
-                                <a href="{{{config.wwwroot}}}/user/view.php?id={{userid}}&course={{courseid}}">
-                                    {{fullname}}
+                                <a href="{{{config.wwwroot}}}/grade/report/user/index.php?id={{courseid}}&userid={{userid}}" class="text-decoration-none" title="{{#str}} viewusergrades, report_quizanalytics {{/str}}">
+                                    <i class="fa fa-user-circle text-secondary me-1"></i>{{fullname}}
                                 </a>
                             </td>
                             <td class="text-muted small">{{email}}</td>
-                            <td><span class="badge bg-light text-dark border">#{{attempt}}</span></td>
+                            <td>
+                                <a href="{{{config.wwwroot}}}/mod/quiz/review.php?attempt={{attemptid}}" target="_blank" class="badge bg-light text-primary border text-decoration-none" title="{{#str}} reviewattempt, report_quizanalytics {{/str}}">
+                                    <i class="fa fa-external-link me-1"></i>#{{attempt}}
+                                </a>
+                            </td>
                             <td class="small">{{timefinish}}</td>
                             <td class="small">{{timetaken}}</td>
                             <td class="fw-bold">{{grade}} / {{maxgrade}}</td>
